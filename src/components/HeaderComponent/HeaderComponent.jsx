@@ -1,10 +1,14 @@
 import React from "react";
 import { Col } from "antd";
-import { WrapperHeader, WrapperTextHeader } from "./style";
-// import Search from "antd/lib/transfer/search";
-import { Input } from 'antd';
+import { WrapperAccount, WrapperHeader, WrapperTextHeader, AccountText } from "./style";
+import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+// import { Input } from 'antd';
+import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
 // import type { SearchProps } from '../Search';
-const { Search } = Input;
+
+
+
+// const { Search } = Input;
 const HeaderComponent = () => {
   return (
     <div>
@@ -13,19 +17,39 @@ const HeaderComponent = () => {
           <WrapperTextHeader>BOTSTORE</WrapperTextHeader>
         </Col>
         <Col span={12}>
-          <Search
-            placeholder="input search text"
-            allowClear
-            enterButton="Search"
-            size="large"
-          // onSearch={onSearch}
+          <ButtonInputSearch
+            size='large'
+            placeholder='Search'
+            textButton='Search'
           />
         </Col>
         <Col span={6}>
-          LOGIN
+          <WrapperAccount>
+            <AccountText>
+              <UserOutlined style={{ fontSize: '35px' }} />
+            </AccountText>
+            <AccountText>
+              <span>Sign In/Sign Out</span>
+              <div>
+                <span>Account</span>
+                <CaretDownOutlined />
+              </div>
+            </AccountText>
+            <AccountText className="Cart">
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+                <ShoppingCartOutlined style={{ fontSize: '35px' }} />
+                <span style={{ marginLeft: '10px' }}>Cart</span>
+              </div>
+            </AccountText>
+          </WrapperAccount>
         </Col>
       </WrapperHeader>
-    </div>
+    </div >
   );
 };
 
