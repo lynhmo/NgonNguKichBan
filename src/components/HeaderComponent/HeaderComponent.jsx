@@ -26,7 +26,7 @@ const HeaderComponent = () => {
         <Col span={6}>
           <WrapperAccount>
             <AccountText>
-              <UserOutlined style={{ fontSize: '35px' }} />
+              <UserOutlined style={{ fontSize: '30px' }} />
             </AccountText>
             <AccountText>
               <span>Sign In/Sign Out</span>
@@ -42,7 +42,7 @@ const HeaderComponent = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-                <ShoppingCartOutlined style={{ fontSize: '35px' }} />
+                <ShoppingCartOutlined style={{ fontSize: '30px' }} />
                 <span style={{ marginLeft: '10px' }}>Cart</span>
               </div>
             </AccountText>
