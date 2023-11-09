@@ -1,8 +1,8 @@
 import React from 'react'
-
+import { TypeStyle } from './style'
 const TypeProduct = ({ name }) => {
     return (
-        <div>{name}</div>
+        <TypeStyle>{name}</TypeStyle>
     )
 }
 

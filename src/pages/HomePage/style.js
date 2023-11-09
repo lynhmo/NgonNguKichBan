@@ -7,5 +7,4 @@ export const WarrperTypeProduct = styled.div`
     algin-items: center;
     gap: 24px;
     justify-content: flex-start;
-    border-bottom: 1px solid red;
 `
