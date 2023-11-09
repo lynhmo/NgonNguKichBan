@@ -13,23 +13,23 @@ const HeaderComponent = () => {
   return (
     <div>
       <WrapperHeader>
-        <Col span={6}>
+        <Col span={4}>
           <WrapperTextHeader>BOTSTORE</WrapperTextHeader>
         </Col>
-        <Col span={12}>
+        <Col span={13}>
           <ButtonInputSearch
             size='large'
             placeholder='Search'
             textButton='Search'
           />
         </Col>
-        <Col span={6}>
+        <Col span={7}>
           <WrapperAccount>
             <AccountText>
               <UserOutlined style={{ fontSize: '30px' }} />
             </AccountText>
             <AccountText>
-              <span>Sign In/Sign Out</span>
+              <span>SignIn/ SignOut</span>
               <div>
                 <span>Account</span>
                 <CaretDownOutlined />

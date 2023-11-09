@@ -24,5 +24,6 @@ export const WrapperAccount = styled.div`
     justify-content: flex-end;
 `
 export const AccountText = styled.div`
-    margin: 0 20px;
+    margin: 0 15px;
+    color: #fff;
 `
