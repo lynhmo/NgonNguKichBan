@@ -5,7 +5,6 @@ export const WrapperHeader = styled(Row)`
     padding: 20px 10%;
     background-color: green;
     align-items: center;
-
 `
 
 export const WrapperTextHeader = styled.span`

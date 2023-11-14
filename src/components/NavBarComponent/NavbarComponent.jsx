@@ -1,5 +1,5 @@
 import React from 'react'
-import { WrapperContent, WrapperLableText, WrapperPrice, WrapperTextValues } from './style'
+import { WrapperContent, WrapperLableText, WrapperNav, WrapperPrice, WrapperTextValues } from './style'
 import { Checkbox, Rate } from 'antd'
 
 const NavbarComponent = () => {
@@ -45,7 +45,7 @@ const NavbarComponent = () => {
   }
 
   return (
-    <div>
+    <WrapperNav>
       <WrapperLableText>
         Hãng
       </WrapperLableText>
@@ -74,7 +74,7 @@ const NavbarComponent = () => {
       <WrapperContent>
         {renderContent('price', ['Dưới 100.000 vnđ', 'dưới 300.000 vnđ', ' dưới 1 triệu'])}
       </WrapperContent>
-    </div>
+    </WrapperNav>
   )
 }
 
