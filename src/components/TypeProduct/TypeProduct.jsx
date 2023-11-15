@@ -1,8 +1,10 @@
 import React from 'react'
-import { TypeStyle } from './style'
+import { LinkStyle, TypeStyle } from './style'
 const TypeProduct = ({ name }) => {
     return (
-        <TypeStyle>{name}</TypeStyle>
+        <LinkStyle href={name.value}>
+            <TypeStyle>{name.title}</TypeStyle>
+        </LinkStyle>
     )
 }
 

@@ -11,12 +11,21 @@ import { Row } from 'antd'
 
 
 const HomePage = () => {
-  const arr = ['Mo hinh', 'Lego', 'Do choi', 'Test 1', 'Test 2', 'Test 3']
+  // const arr = ['Mo hinh', 'Lego', 'Do choi', 'Test 1', 'Test 2', 'Test 3']
+  const arrTest = [
+    { title: 'Trang chủ', value: '/' },
+    { title: 'Product', value: '/product/' },
+  ]
   return (
     <>
       <div style={{ padding: '0 120px' }}>
         <WarrperTypeProduct>
-          {arr.map((item) => {
+          {/* {arr.map((item) => {
+            return (
+              <TypeProduct name={item} key={item} />
+            )
+          })} */}
+          {arrTest.map((item) => {
             return (
               <TypeProduct name={item} key={item} />
             )
