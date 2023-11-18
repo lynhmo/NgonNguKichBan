@@ -1,7 +1,7 @@
 import React from 'react'
 import NavbarComponent from '../../components/NavBarComponent/NavbarComponent'
 import CardComponent from '../../components/CardComponent/CardComponent'
-import { Col, Row } from 'antd'
+import { Col, Row, Pagination } from 'antd'
 import { WrapperProduct } from './style'
 import { WarrperTypeProduct } from '../HomePage/style'
 import TypeProduct from '../../components/TypeProduct/TypeProduct'
@@ -47,9 +47,7 @@ const ProductsPage = () => {
             <CardComponent />
             <CardComponent />
             <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
+            <Pagination defaultCurrent={6} total={100} style={{ margin: '50px 0', }} />
           </WrapperProduct>
         </Row>
       </div>
