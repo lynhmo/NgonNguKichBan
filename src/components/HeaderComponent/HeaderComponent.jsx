@@ -29,7 +29,7 @@ const HeaderComponent = () => {
               <UserOutlined style={{ fontSize: '30px' }} />
             </AccountText>
             <AccountText>
-              <span>SignIn/ SignOut</span>
+              <a href="/sign-in" style={{ textDecoration: 'none', color: '#fff' }}>SignIn/ SignOut</a>
               <div>
                 <span>Account</span>
                 <CaretDownOutlined />

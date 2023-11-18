@@ -51,7 +51,7 @@ const ProductDetailComponent = () => {
                         icon={<ShoppingCartOutlined />}
                         styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '250px', height: '50px', fontSize: '18px', fontWeight: '500' }}
                         textButton={'Thêm vào giỏ hàng'}
-                    ></ButtonComponent>
+                    />
                 </div>
             </Col>
         </Row>

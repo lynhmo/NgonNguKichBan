@@ -42,11 +42,11 @@ const HomePage = () => {
         </div> */}
         <div style={{ display: 'flex', flexDirection: 'row', marginTop: '50px' }}>
           {/* NAV */}
-          <div style={{ width: '15%' }}>
+          {/* <div style={{ width: '15%' }}>
             <NavbarComponent />
-          </div>
+          </div> */}
           {/* Product */}
-          <div style={{ width: '85%' }}>
+          <div style={{ width: '100%' }}>
             <Row gutter={[0, 48]}>
               <WarrperProductChild span={6}>
                 <CardComponent />

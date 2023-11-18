@@ -28,7 +28,7 @@ export const routes = [
         isShowFooter: true,
     },
     {
-        path: '/:type',
+        path: '/type',
         page: TypeProductPage,
         isShowHeader: true,
         isShowFooter: true,
@@ -36,14 +36,14 @@ export const routes = [
     {
         path: '/sign-in',
         page: SignInPage,
-        isShowHeader: true,
-        isShowFooter: true,
+        isShowHeader: false,
+        isShowFooter: false,
     },
     {
         path: '/sign-up',
         page: SignUpPage,
-        isShowHeader: true,
-        isShowFooter: true,
+        isShowHeader: false,
+        isShowFooter: false,
     },
     {
         path: '/product-detail',
