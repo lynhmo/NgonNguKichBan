@@ -11,7 +11,7 @@ export const WarpperSginInRight = styled.div`
     width: 500px;
     background-color:#FFF;
     padding: 30px;
-    height: 255px;
+    height: max-content;
     border-radius: 10px;
     margin-top: 100px
 `
@@ -19,7 +19,7 @@ export const WarpperSginInRight = styled.div`
 export const WarpperButton = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 20px;
     flex-direction: column;
     gap:5px
 `

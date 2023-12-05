@@ -6,7 +6,7 @@ import slider6 from '../../assets/images/slider6.jpg'
 import slider2 from '../../assets/images/slider2.jpg'
 import slider3 from '../../assets/images/slider3.jpg'
 import CardComponent from '../../components/CardComponent/CardComponent'
-import NavbarComponent from '../../components/NavBarComponent/NavbarComponent'
+// import NavbarComponent from '../../components/NavBarComponent/NavbarComponent'
 import { Row } from 'antd'
 
 

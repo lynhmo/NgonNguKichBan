@@ -5,11 +5,18 @@ import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-desi
 // import { Input } from 'antd';
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
 // import type { SearchProps } from '../Search';
-
-
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 // const { Search } = Input;
 const HeaderComponent = () => {
+  const navigate = useNavigate()
+  const handleNavigateLogin = () => {
+    navigate('/sign-in')
+  }
+  const user = useSelector((state) => state.user)
+  // console.log(user);
+
   return (
     <div>
       <WrapperHeader>
@@ -28,8 +35,12 @@ const HeaderComponent = () => {
             <AccountText>
               <UserOutlined style={{ fontSize: '30px' }} />
             </AccountText>
-            <AccountText>
-              <a href="/sign-in" style={{ textDecoration: 'none', color: '#fff' }}>SignIn/ SignOut</a>
+            <AccountText >
+              {user?.name ? (
+                <div>{user?.name}</div>
+              ) : (
+                <div onClick={handleNavigateLogin} style={{ textDecoration: 'none', color: '#fff', cursor: 'pointer' }}>SignIn/ SignOut</div>
+              )}
               <div>
                 <span>Account</span>
                 <CaretDownOutlined />

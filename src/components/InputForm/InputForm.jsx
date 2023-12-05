@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Input } from 'antd'
 const InputForm = (props) => {
-    const [valueInput, setValueInput] = useState('')
     const { placeholder = ' Nhap text', ...rests } = props
+    const handleOnchangeInput = (e) => {
+        props.onChange(e.target.value)
+    }
     return (
-        <Input placeholder={placeholder} valueInput={valueInput} {...rests} style={{}} />
+        <Input
+            placeholder={placeholder}
+            value={props.value}
+            {...rests}
+            onChange={handleOnchangeInput}
+        />
     )
 }
 
