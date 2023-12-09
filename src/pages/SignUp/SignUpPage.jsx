@@ -8,7 +8,7 @@ import { WarpperSignUpLeft, WarpperSignUpRight, WarpperTitle, WarpperButton } fr
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
 
 import * as UserService from '../../services/UserService'
-import { useMutaionHook } from '../../hooks/useMutationHook';
+import { useMutationHook } from '../../hooks/useMutationHook';
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent';
 
 import * as AlertMessage from '../../components/Message/Message'
@@ -26,7 +26,7 @@ const SignUp = () => {
   const [isShowPassword, setIsShowPassword] = useState(false)
   const [isShowCofPassword, setIsShowCofPassword] = useState(false)
 
-  const mutation = useMutaionHook(
+  const mutation = useMutationHook(
     data => UserService.signupUser(data)
   )
   const { data, isPending } = mutation

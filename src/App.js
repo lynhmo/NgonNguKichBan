@@ -51,14 +51,6 @@ function App() {
   }
   const dispatch = useDispatch()
 
-  // const fetchApi = async () => {
-  //   const res = await axios.get(`${process.env.REACT_APP_URL}/product/getall`)
-  //   return res.data
-  // }
-
-  // const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi })
-  // console.log(query);
-
   return (
     <div>
       <Router>

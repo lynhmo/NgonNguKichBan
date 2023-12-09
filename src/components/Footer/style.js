@@ -3,7 +3,7 @@ import styled from "styled-components"
 
 export const WrapperFooter = styled(Row)`
     padding: 20px 10%;
-    background-color: green;
+    background-color: #397224;
     align-items: center;
     color: #FFF;
 `

@@ -7,7 +7,7 @@ import smallLogo from "../../assets/images/small_logo1.png"
 import Logo from "../../assets/images/Logo.png"
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
 import * as UserService from '../../services/UserService'
-import { useMutaionHook } from '../../hooks/useMutationHook';
+import { useMutationHook } from '../../hooks/useMutationHook';
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent';
 import { useNavigate } from 'react-router-dom'
 import * as AlertMessage from '../../components/Message/Message'
@@ -23,7 +23,7 @@ const SignIn = () => {
   const [isShowPassword, setIsShowPassword] = useState(false)
   const dispatch = useDispatch()
 
-  const mutation = useMutaionHook(
+  const mutation = useMutationHook(
     data => UserService.loginUser(data)
   )
   const { data, isPending } = mutation
