@@ -61,7 +61,7 @@ const ProfilePage = () => {
     const mutation = useMutationHook(
         (data) => {
             const { id, access_token, ...rests } = data
-            UserService.updateUser(id, rests, access_token)
+            UserService.updateUser(id, access_token, rests)
         }
     )
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
-import { Button, Modal, Form } from 'antd'
-import { PlusCircleFilled, DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
+import { Button, Form, Space } from 'antd'
+import { PlusCircleFilled, DeleteTwoTone, EditTwoTone, SearchOutlined } from '@ant-design/icons'
 import * as AlertMessage from '../Message/Message'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
@@ -12,13 +12,16 @@ import * as ProductService from '../../services/ProductService'
 import Loading from '../../components/Loading/Loading'
 import { useQuery } from '@tanstack/react-query'
 import DrawerComponent from '../../components/DrawerComponent/DrawerComponent'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import ModalComponent from '../../components/ModalComponent/ModalComponent'
 
 
 
 
 const AdminProduct = () => {
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
     const user = useSelector((state) => state.user)
     const [form] = Form.useForm()
     const [rowSelected, setRowSelected] = useState('')
@@ -51,7 +54,7 @@ const AdminProduct = () => {
             return res
         }
     )
-    const { data, isError, isSuccess, isPending } = mutation
+    const { data, isSuccess, isPending } = mutation
 
     const handleAddUser = () => { setIsModalOpen(true); }     // dummy function
     const handleCancel = () => {
@@ -215,6 +218,7 @@ const AdminProduct = () => {
             fetchGetDetailProducts(rowSelected)
         }
     }, [rowSelected])
+
     const handleDeleteProduct = () => {
         mutationDelete.mutate({ id: rowSelected, token: user?.access_token }, {
             onSettled: () => {
@@ -237,36 +241,182 @@ const AdminProduct = () => {
             </div>
         )
     }
+
+
+    // search for products
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div
+                style={{
+                    padding: 8,
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+            >
+                <InputComponent
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{
+                        marginBottom: 8,
+                        display: 'block',
+                    }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Reset
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            confirm({
+                                closeDropdown: false,
+                            });
+                            setSearchText(selectedKeys[0]);
+                            setSearchedColumn(dataIndex);
+                        }}
+                    >
+                        Filter
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            close();
+                        }}
+                    >
+                        close
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered) => (
+            <SearchOutlined
+                style={{
+                    color: filtered ? '#1677ff' : undefined,
+                }}
+            />
+        ),
+        onFilter: (value, record) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        // render: (text) =>
+        //     searchedColumn === dataIndex ? (
+        //         <Highlighter
+        //             highlightStyle={{
+        //                 backgroundColor: '#ffc069',
+        //                 padding: 0,
+        //             }}
+        //             searchWords={[searchText]}
+        //             autoEscape
+        //             textToHighlight={text ? text.toString() : ''}
+        //         />
+        //     ) : (
+        //         text
+        //     ),
+    });
+
+
     // Data for Table
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
+            sorter: (a, b) => a.name.length - b.name.length,
+            ...getColumnSearchProps('name')
         },
         {
             title: 'Stock',
             dataIndex: 'countInStock',
+            sorter: (a, b) => a.countInStock - b.countInStock
         },
         {
             title: 'Type',
             dataIndex: 'type',
+            sorter: (a, b) => a.type - b.type,
+            ...getColumnSearchProps('type')
         },
         {
             title: 'Price',
             dataIndex: 'price',
+            sorter: (a, b) => a.price - b.price,
+            filters: [
+                {
+                    text: '>= 500',
+                    value: '>=',
+                },
+                {
+                    text: '<= 100',
+                    value: '<=',
+                }
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return record.price >= 500
+                }
+                return record.price <= 100
+            },
         },
         {
             title: 'Rating',
             dataIndex: 'rating',
+            sorter: (a, b) => a.rating - b.rating,
+            filters: [
+                {
+                    text: '>= 3',
+                    value: '>=',
+                },
+                {
+                    text: '<= 3',
+                    value: '<=',
+                }
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.rating) >= 3
+                }
+                return Number(record.rating) <= 3
+            },
         },
 
         {
             title: 'Description',
-            dataIndex: 'rating',
-        },
-        {
-            title: 'Image',
-            dataIndex: 'image',
+            dataIndex: 'description',
+            sorter: (a, b) => a.description.length - b.description.length
+
         },
         {
             title: 'Action',
@@ -274,10 +424,9 @@ const AdminProduct = () => {
             render: renderAction
         },
     ];
-    const dataTable = productData?.data.map((product) => {
+    const dataTable = productData?.data?.map((product) => {
         return { ...product, key: product._id };
     })
-
     return (
         <div>
             <WrapperHeader>Product Manager</WrapperHeader>
@@ -287,8 +436,9 @@ const AdminProduct = () => {
                     Add Product
                     <PlusCircleFilled />
                 </Button>
+
                 {/* MODAL ADD PROD */}
-                <ModalComponent title="ADD PRODUCT" open={isModalOpen} onCancel={handleCancel} footer={null}>
+                <ModalComponent forceRender title="ADD PRODUCT" open={isModalOpen} onCancel={handleCancel} footer={null}>
                     <Loading isLoading={isPending} >
                         <Form
                             name="basic"
@@ -433,21 +583,22 @@ const AdminProduct = () => {
                 </ModalComponent>
                 {/*  */}
                 <hr />
-                <div>
-                    <Loading isLoading={isPendingUpdate}>
-                        <TableComponent
-                            ColumnData={columns}
-                            TableData={dataTable}
-                            isLoading={isLoading}
-                            onRow={(record, rowIndex) => {
-                                return {
-                                    onClick: (event) => { setRowSelected(record._id) }, // click row
-                                };
-                            }}
-                        />
-                    </Loading>
-                </div>
+                {/* Table */}
 
+                <Loading isLoading={isPendingUpdate}>
+                    <TableComponent
+                        ColumnData={columns}
+                        TableData={dataTable}
+                        isLoading={isLoading}
+                        onRow={(record, rowIndex) => {
+                            return {
+                                onClick: (event) => { setRowSelected(record._id) }, // click row
+                            };
+                        }}
+                    />
+                </Loading>
+
+                {/*  */}
                 <DrawerComponent title='Product Detail' isOpen={isOpenDrawer} size={'large'} onClose={() => { setIsOpenDrawer(false) }} >
                     <Loading isLoading={isLoadingUpdate || isPendingUpdate} >
                         <Form

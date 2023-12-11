@@ -43,8 +43,26 @@ export const logoutUser = async () => {
     return res.data
 }
 
-export const updateUser = async (id, data, access_token) => {
+export const updateUser = async (id, access_token, data) => {
     const res = await axiosJWT.put(`${process.env.REACT_APP_URL}/user/update-user/${id}`, data, {
+        headers: {
+            token: `BbbbGet ${access_token}`
+        }
+    })
+    return res.data
+}
+
+
+export const getallUser = async (access_token) => {
+    const res = await axiosJWT.get(`${process.env.REACT_APP_URL}/user/getall`, {
+        headers: {
+            token: `BbbbGet ${access_token}`
+        }
+    })
+    return res.data
+}
+export const deleteUser = async (id, access_token) => {
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_URL}/user/delete-user/${id}`, {
         headers: {
             token: `BbbbGet ${access_token}`
         }
