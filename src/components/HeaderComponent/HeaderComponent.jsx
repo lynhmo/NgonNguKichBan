@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as UserService from "../../services/UserService"
 import { resetUser } from '../../redux/slides/userSlide';
 import Loading from '../Loading/Loading';
+import BigLogo from '../../assets/images/Logo.png';
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdminPage = false }) => {
   const [loading, setLoading] = useState(false)
@@ -67,10 +68,12 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
       {/* this is for logout message */}
       {contextHolder}
       <WrapperHeader>
-        <Col span={4}>
-          <WrapperTextHeader onClick={() => { navigate('/') }}>BOTSTORE</WrapperTextHeader>
+        <Col span={7}>
+          <WrapperTextHeader onClick={() => { navigate('/') }}>
+            <img src={BigLogo} alt="logo" width={300} style={{ objectFit: 'cover' }} />
+          </WrapperTextHeader>
         </Col>
-        <Col span={13}>
+        <Col span={10}>
           {!isHiddenSearch && (
             <ButtonInputSearch
               size='large'
@@ -84,8 +87,8 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
             <AccountText style={{ margin: '0' }}>
               {avatar ? (
                 <img src={avatar} alt="avatar" style={{
-                  height: '60px',
-                  width: '60px',
+                  height: '50px',
+                  width: '50px',
                   borderRadius: '50%',
                   objectFit: 'cover'
                 }} />

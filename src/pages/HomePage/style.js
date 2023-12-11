@@ -5,7 +5,7 @@ import styled from "styled-components"
 
 export const WarrperTypeProduct = styled.div`
     display: flex;
-    algin-items: center;
+    align-items: center;
     gap: 24px;
     justify-content: flex-start;
 `

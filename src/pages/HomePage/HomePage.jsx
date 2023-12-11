@@ -21,8 +21,7 @@ const HomePage = () => {
     // console.log(res);
     return res
   }
-  const { isPending, data: products } = useQuery({ queryKey: 'product', queryFn: fetchAllProduct, retry: 3, retryDelay: 1000 })
-  console.log(products);
+  const { data: products } = useQuery({ queryKey: 'product', queryFn: fetchAllProduct, retry: 3, retryDelay: 1000 })
 
 
 
@@ -43,7 +42,7 @@ const HomePage = () => {
         </WarrperTypeProduct>
       </div>
 
-      <div id="container" style={{ background: '#efefef', padding: '20px 120px' }}>
+      <div id="container" style={{ background: '#dbe4d8', padding: '20px 120px' }}>
         <SliderComponent arrImages={[slider6, slider2, slider3]} />
         {/* <div style={{ marginTop: '50px', display: 'flex', gap: '20px' }}>
           <CardComponent />

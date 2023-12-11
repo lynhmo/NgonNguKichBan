@@ -27,7 +27,7 @@ const ProductsPage = () => {
           })}
         </WarrperTypeProduct>
       </div>
-      <div id="container" style={{ background: '#efefef', padding: '20px 120px' }}>
+      <div id="container" style={{ background: '#dbe4d8', padding: '20px 120px' }}>
         <Row justify="space-between">
           <Col span={4}>
             <NavbarComponent />
