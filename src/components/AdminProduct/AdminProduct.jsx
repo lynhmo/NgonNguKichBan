@@ -12,13 +12,20 @@ import * as ProductService from '../../services/ProductService'
 import Loading from '../../components/Loading/Loading'
 import { useQuery } from '@tanstack/react-query'
 import DrawerComponent from '../../components/DrawerComponent/DrawerComponent'
+import { useDispatch, useSelector } from 'react-redux'
+import ModalComponent from '../../components/ModalComponent/ModalComponent'
+
+
+
 
 const AdminProduct = () => {
+    const user = useSelector((state) => state.user)
     const [form] = Form.useForm()
     const [rowSelected, setRowSelected] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
-
+    const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [stateProduct, setStateProduct] = useState({
         name: '',
         price: '',
@@ -46,10 +53,7 @@ const AdminProduct = () => {
     )
     const { data, isError, isSuccess, isPending } = mutation
 
-    const handleAddUser = () => {
-        setIsModalOpen(true);
-    }
-    const handleOk = () => { };     // dummy function
+    const handleAddUser = () => { setIsModalOpen(true); }     // dummy function
     const handleCancel = () => {
         setIsModalOpen(false);
         setStateProduct({
@@ -63,6 +67,20 @@ const AdminProduct = () => {
         })
         form.resetFields();
     };
+    const handleCancelDrawer = () => {
+        setIsOpenDrawer(false);
+        setStateProductDetail({
+            name: '',
+            price: '',
+            description: '',
+            image: '',
+            type: '',
+            countInStock: '',
+            rating: ''
+        })
+        form.resetFields();
+    };
+    const handleCancelDelete = () => { setIsModalOpenDelete(false) }
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
             AlertMessage.success()
@@ -71,14 +89,58 @@ const AdminProduct = () => {
         } else if (data?.status === 'ERR') {
             AlertMessage.error()
             mutation.reset();
-
-
         }
     })
-
-
-
-    const onFinish = (values) => { mutation.mutate(stateProduct) };
+    useEffect(() => {
+        if (isSuccessUpdate && dataUpdate?.status === 'OK') {
+            AlertMessage.success()
+            handleCancelDrawer()
+            mutationUpdate.reset()
+        } else if (data?.status === 'ERR') {
+            AlertMessage.error()
+            mutationUpdate.reset()
+        }
+    })
+    useEffect(() => {
+        if (isSuccessDelete && dataDelete?.status === 'OK') {
+            AlertMessage.success()
+            handleCancelDelete()
+            mutationDelete.reset()
+        } else if (data?.status === 'ERR') {
+            AlertMessage.error()
+            mutationDelete.reset()
+        }
+    })
+    const mutationUpdate = useMutationHook(
+        (data) => {
+            const { id, token, ...rests } = data
+            const res = ProductService.updateProduct(id, token, { ...rests })
+            return res
+        }
+    )
+    const mutationDelete = useMutationHook(
+        (data) => {
+            const { id, token } = data
+            const res = ProductService.deleteProduct(id, token)
+            return res
+        }
+    )
+    const { data: dataUpdate, isSuccess: isSuccessUpdate, isPending: isPendingUpdate } = mutationUpdate
+    const { data: dataDelete, isSuccess: isSuccessDelete, isPending: isPendingDelete } = mutationDelete
+    const onFinishAddProduct = (values) => {
+        mutation.mutate(stateProduct, {
+            onSettled: () => {
+                queryProduct.refetch()
+            }
+        })
+    };
+    const onFinishUpdateProduct = (values) => {
+        mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetail }, {
+            onSettled: () => {
+                queryProduct.refetch() //update table after update product
+            }
+        })
+    }
     const onFinishFailed = (errorInfo) => { AlertMessage.error() };
     const handleOnChange = (e) => {
         setStateProduct({
@@ -123,42 +185,55 @@ const AdminProduct = () => {
     }
 
     const fetchGetDetailProducts = async (rowSelected) => {
-        const res = await ProductService.getDetailProduct(rowSelected)
-        if (res?.data) {
-            setStateProductDetail({
-                name: res?.data.name,
-                price: res?.data.price, 
-                image: res?.data.image,
-                type: res?.data.type,
-                countInStock: res?.data.countInStock,
-                rating: res?.data.rating
-            })
+        try {
+            const res = await ProductService.getDetailProduct(rowSelected)
+            if (res?.data) {
+                setStateProductDetail({
+                    name: res?.data.name,
+                    price: res?.data.price,
+                    image: res?.data.image,
+                    type: res?.data.type,
+                    countInStock: res?.data.countInStock,
+                    rating: res?.data.rating,
+                    description: res?.data.description
+                })
+            }
+            setIsLoadingUpdate(false)
+        } catch (error) {
+
         }
-        // return res
     }
     useEffect(() => {
+        if (!isModalOpen) {
+            form.setFieldsValue(stateProductDetail)
+        }
+    }, [form, stateProductDetail, isModalOpen]);
+
+    useEffect(() => {
         if (rowSelected) {
+            setIsLoadingUpdate(true)
             fetchGetDetailProducts(rowSelected)
         }
     }, [rowSelected])
-    const handleEditProduct = () => {
-        console.log('stateProductDetail', stateProductDetail)
-        if (rowSelected) {
-            fetchGetDetailProducts()
-        }
-        setIsOpenDrawer(true)
+    const handleDeleteProduct = () => {
+        mutationDelete.mutate({ id: rowSelected, token: user?.access_token }, {
+            onSettled: () => {
+                queryProduct.refetch()
+            }
+        })
     }
-
+    const handleEditProduct = () => { setIsOpenDrawer(true) }
     const fetchGetAllProducts = async () => {
         const res = await ProductService.GetAllProduct()
         return res
     }
-    const { isLoading, data: productData } = useQuery({ queryKey: 'products', queryFn: fetchGetAllProducts })
+    const queryProduct = useQuery({ queryKey: 'products', queryFn: fetchGetAllProducts })
+    const { isLoading, data: productData } = queryProduct
     const renderAction = () => {
         return (
-            <div style={{ fontSize: 25, cursor: 'pointer' }}>
-                <EditTwoTone twoToneColor={'#397224'} onClick={handleEditProduct} />
-                <DeleteTwoTone twoToneColor={'#FF0000'} />
+            <div style={{ fontSize: 25, display: 'flex', gap: 10 }}>
+                <EditTwoTone twoToneColor={'#397224'} onClick={handleEditProduct} style={{ cursor: 'pointer' }} />
+                <DeleteTwoTone twoToneColor={'#FF0000'} onClick={() => { setIsModalOpenDelete(true) }} style={{ cursor: 'pointer' }} />
             </div>
         )
     }
@@ -203,7 +278,6 @@ const AdminProduct = () => {
         return { ...product, key: product._id };
     })
 
-
     return (
         <div>
             <WrapperHeader>Product Manager</WrapperHeader>
@@ -213,7 +287,8 @@ const AdminProduct = () => {
                     Add Product
                     <PlusCircleFilled />
                 </Button>
-                <Modal title="Add user" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
+                {/* MODAL ADD PROD */}
+                <ModalComponent title="ADD PRODUCT" open={isModalOpen} onCancel={handleCancel} footer={null}>
                     <Loading isLoading={isPending} >
                         <Form
                             name="basic"
@@ -226,7 +301,7 @@ const AdminProduct = () => {
                             style={{
                                 maxWidth: 600,
                             }}
-                            onFinish={onFinish}
+                            onFinish={onFinishAddProduct}
                             onFinishFailed={onFinishFailed}
                             autoComplete="off"
                             form={form}
@@ -346,28 +421,35 @@ const AdminProduct = () => {
                             </Form.Item>
                         </Form>
                     </Loading>
-                </Modal>
-
+                </ModalComponent>
+                {/*  */}
+                {/* MODAL DEL PROD */}
+                <ModalComponent title="DELETE PRODUCT" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct} >
+                    <Loading isLoading={isPendingDelete} >
+                        <div style={{ color: 'red' }}>
+                            Confirm delete product!
+                        </div>
+                    </Loading>
+                </ModalComponent>
+                {/*  */}
                 <hr />
                 <div>
-                    <TableComponent
-                        ColumnData={columns}
-                        TableData={dataTable}
-                        isLoading={isLoading}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onClick: (event) => { setRowSelected(record._id) }, // click row
-                            };
-                        }}
-                    />
+                    <Loading isLoading={isPendingUpdate}>
+                        <TableComponent
+                            ColumnData={columns}
+                            TableData={dataTable}
+                            isLoading={isLoading}
+                            onRow={(record, rowIndex) => {
+                                return {
+                                    onClick: (event) => { setRowSelected(record._id) }, // click row
+                                };
+                            }}
+                        />
+                    </Loading>
                 </div>
 
-                <DrawerComponent
-                    title='Product Detail'
-                    isOpen={isOpenDrawer}
-                    onClose={() => { setIsOpenDrawer(false) }}
-                >
-                    <Loading isLoading={isPending} >
+                <DrawerComponent title='Product Detail' isOpen={isOpenDrawer} size={'large'} onClose={() => { setIsOpenDrawer(false) }} >
+                    <Loading isLoading={isLoadingUpdate || isPendingUpdate} >
                         <Form
                             name="basic"
                             labelCol={{
@@ -379,10 +461,10 @@ const AdminProduct = () => {
                             style={{
                                 maxWidth: 600,
                             }}
-                            onFinish={onFinish}
+                            onFinish={onFinishUpdateProduct}
                             onFinishFailed={onFinishFailed}
-                            autoComplete="off"
-                        // form={form}
+                            autoComplete="on"
+                            form={form}
                         >
                             <Form.Item
                                 label="Name"
@@ -462,9 +544,7 @@ const AdminProduct = () => {
                                 <InputComponent placeholder={'Product Description'} onChange={handleOnChangeDetailProduct} value={stateProductDetail.description} name='description' />
                             </Form.Item>
 
-                            <Form.Item
-                                label="Image"
-                                name="image"
+                            <Form.Item label="Image" name="image"
                                 rules={[
                                     {
                                         required: true,
@@ -484,17 +564,9 @@ const AdminProduct = () => {
                                     )}
                                 </WrapperUploadFile>
                             </Form.Item>
-
-
-
-                            <Form.Item
-                                wrapperCol={{
-                                    offset: 8,
-                                    span: 16,
-                                }}
-                            >
+                            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                 <Button type="primary" htmlType="submit">
-                                    Submit
+                                    Apply
                                 </Button>
                             </Form.Item>
                         </Form>
