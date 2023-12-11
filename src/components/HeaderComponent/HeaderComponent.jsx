@@ -9,7 +9,7 @@ import * as UserService from "../../services/UserService"
 import { resetUser } from '../../redux/slides/userSlide';
 import Loading from '../Loading/Loading';
 
-const HeaderComponent = () => {
+const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdminPage = false }) => {
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
@@ -45,7 +45,8 @@ const HeaderComponent = () => {
   const content = (
     <div>
       <AccountPopupChild onClick={handleNavigateProfile}>Profile Page</AccountPopupChild>
-
+      {user?.isAdmin && (<AccountPopupChild onClick={() => { navigate('/admin') }}>Admin</AccountPopupChild >)}
+      {isAdminPage && (<AccountPopupChild onClick={() => { navigate('/') }}>Go back main page</AccountPopupChild >)}
       <AccountPopupChild style={{ cursor: 'pointer', color: 'red' }} onClick={handleLogout}>
         Logout
         <LogoutOutlined style={{ marginLeft: '5px' }} />
@@ -70,11 +71,13 @@ const HeaderComponent = () => {
           <WrapperTextHeader onClick={() => { navigate('/') }}>BOTSTORE</WrapperTextHeader>
         </Col>
         <Col span={13}>
-          <ButtonInputSearch
-            size='large'
-            placeholder='Search'
-            textButton='Search'
-          />
+          {!isHiddenSearch && (
+            <ButtonInputSearch
+              size='large'
+              placeholder='Search'
+              textButton='Search'
+            />
+          )}
         </Col>
         <Col span={7}>
           <WrapperAccount>
@@ -111,12 +114,15 @@ const HeaderComponent = () => {
               </AccountText>
 
             </Loading>
-            <AccountText className="Cart">
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                <ShoppingCartOutlined style={{ fontSize: '30px' }} />
-                <span style={{ marginLeft: '10px' }}>Cart</span>
-              </div>
-            </AccountText>
+            {!isHiddenCart && (
+              <AccountText className="Cart">
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  <ShoppingCartOutlined style={{ fontSize: '30px' }} />
+                  <span style={{ marginLeft: '10px' }}>Cart</span>
+                </div>
+              </AccountText>
+            )}
+
           </WrapperAccount>
         </Col>
       </WrapperHeader>

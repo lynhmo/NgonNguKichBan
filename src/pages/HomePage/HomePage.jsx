@@ -8,13 +8,24 @@ import slider3 from '../../assets/images/slider3.jpg'
 import CardComponent from '../../components/CardComponent/CardComponent'
 // import NavbarComponent from '../../components/NavBarComponent/NavbarComponent'
 import { Row } from 'antd'
-
-
+import { useQuery } from '@tanstack/react-query'
+import * as ProductService from '../../services/ProductService'
 const HomePage = () => {
   const arrTest = [
     { title: 'Trang chủ', value: '/' },
     { title: 'Product', value: '/product' },
   ]
+
+  const fetchAllProduct = async () => {
+    const res = await ProductService.GetAllProduct()
+    // console.log(res);
+    return res
+  }
+  const { isPending, data: products } = useQuery({ queryKey: 'product', queryFn: fetchAllProduct, retry: 3, retryDelay: 1000 })
+  console.log(products);
+
+
+
   return (
     <>
       <div style={{ padding: '0 120px' }}>
@@ -48,18 +59,22 @@ const HomePage = () => {
           {/* Product */}
           <div style={{ width: '100%' }}>
             <Row gutter={[0, 48]}>
-              <WarrperProductChild span={6}>
-                <CardComponent />
-              </WarrperProductChild>
-              <WarrperProductChild span={6}>
-                <CardComponent />
-              </WarrperProductChild>
-              <WarrperProductChild span={6}>
-                <CardComponent />
-              </WarrperProductChild>
-              <WarrperProductChild span={6}>
-                <CardComponent />
-              </WarrperProductChild>
+              {products?.data?.map((product => {
+                return (
+                  <WarrperProductChild span={6}>
+                    <CardComponent
+                      key={product._id}
+                      name={product.name}
+                      image={product.image}
+                      type={product.type}
+                      price={product.price}
+                      countInStock={product.countInStock}
+                      rating={product.rating}
+                      description={product.description}
+                    />
+                  </WarrperProductChild>
+                )
+              }))}
             </Row>
           </div>
         </div>

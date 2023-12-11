@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { useDispatch, useSelector } from 'react-redux'
-import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook';
+import * as UserService from '../../services/UserService'
 import * as AlertMessage from '../../components/Message/Message'
 import { updateUser } from '../../redux/slides/userSlide'
 // import Loading from '../../components/Loading/Loading'
@@ -65,7 +65,7 @@ const ProfilePage = () => {
         }
     )
 
-    const { data, isError, isSuccess } = mutation
+    const { isError, isSuccess } = mutation
 
     // Lay data vao mutaion
     const hanldeUpdateUser = () => {

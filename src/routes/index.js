@@ -7,6 +7,7 @@ import SignInPage from "../pages/SignIn/SignInPage";
 import SignUpPage from "../pages/SignUp/SignUpPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
+import AdminPage from "../pages/AdminPage/AdminPage";
 
 export const routes = [
     {
@@ -63,5 +64,10 @@ export const routes = [
         page: NotFoundPage,
         // isShowHeader: false,
         // 404 page 
+    },
+    {
+        path: '/admin',
+        page: AdminPage,
+        isPrivate: true
     },
 ]

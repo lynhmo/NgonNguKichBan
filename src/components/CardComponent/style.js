@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const StyleNameProduct = styled.div`
-    font-weight: 200;
+    font-weight: 400;
     font-size: 18px;
     line-height:16px;
     color: rgb(56,56,61)
