@@ -29,7 +29,7 @@ const AdminProduct = () => {
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
-    const [stateProduct, setStateProduct] = useState({
+    const inittial = () => ({
         name: '',
         price: '',
         description: '',
@@ -37,53 +37,24 @@ const AdminProduct = () => {
         type: '',
         countInStock: '',
         rating: ''
-    });
-    const [stateProductDetail, setStateProductDetail] = useState({
-        name: '',
-        price: '',
-        description: '',
-        image: '',
-        type: '',
-        countInStock: '',
-        rating: ''
-    });
-    const mutation = useMutationHook(
-        (data) => {
-            const { name, price, description, image, type, countInStock, rating } = data
-            const res = ProductService.createProduct({ name, price, description, image, type, countInStock, rating })
-            return res
-        }
-    )
-    const { data, isSuccess, isPending } = mutation
+    })
+    const [stateProduct, setStateProduct] = useState(inittial());
+    const [stateProductDetail, setStateProductDetail] = useState(inittial());
 
-    const handleAddUser = () => { setIsModalOpen(true); }     // dummy function
+
+    const handleAddUser = () => { setIsModalOpen(true); }
     const handleCancel = () => {
         setIsModalOpen(false);
-        setStateProduct({
-            name: '',
-            price: '',
-            description: '',
-            image: '',
-            type: '',
-            countInStock: '',
-            rating: ''
-        })
+        setStateProduct(inittial())
         form.resetFields();
     };
     const handleCancelDrawer = () => {
         setIsOpenDrawer(false);
-        setStateProductDetail({
-            name: '',
-            price: '',
-            description: '',
-            image: '',
-            type: '',
-            countInStock: '',
-            rating: ''
-        })
+        setStateProductDetail(inittial())
         form.resetFields();
     };
     const handleCancelDelete = () => { setIsModalOpenDelete(false) }
+
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
             AlertMessage.success()
@@ -114,6 +85,15 @@ const AdminProduct = () => {
             mutationDelete.reset()
         }
     })
+    useEffect(() => {
+        if (isSuccessDeleteMany && dataDeleteMany?.status === 'OK') {
+            AlertMessage.success()
+            mutationDeleteMany.reset()
+        } else if (data?.status === 'ERR') {
+            AlertMessage.error()
+            mutationDeleteMany.reset()
+        }
+    })
     const mutationUpdate = useMutationHook(
         (data) => {
             const { id, token, ...rests } = data
@@ -128,23 +108,41 @@ const AdminProduct = () => {
             return res
         }
     )
+    const mutationDeleteMany = useMutationHook(
+        (data) => {
+            const { ids, token } = data
+            const res = ProductService.deleteManyProduct(ids, token)
+            return res
+        }
+    )
+    const mutation = useMutationHook(
+        (data) => {
+            const { name, price, description, image, type, countInStock, rating } = data
+            const res = ProductService.createProduct({ name, price, description, image, type, countInStock, rating })
+            return res
+        }
+    )
+
+    const { data, isSuccess, isPending } = mutation
     const { data: dataUpdate, isSuccess: isSuccessUpdate, isPending: isPendingUpdate } = mutationUpdate
     const { data: dataDelete, isSuccess: isSuccessDelete, isPending: isPendingDelete } = mutationDelete
-    const onFinishAddProduct = (values) => {
+    const { data: dataDeleteMany, isSuccess: isSuccessDeleteMany, isPending: isPendingDeleteMany } = mutationDeleteMany
+
+    const onFinishAddProduct = () => {
         mutation.mutate(stateProduct, {
             onSettled: () => {
                 queryProduct.refetch()
             }
         })
     };
-    const onFinishUpdateProduct = (values) => {
+    const onFinishUpdateProduct = () => {
         mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetail }, {
             onSettled: () => {
                 queryProduct.refetch() //update table after update product
             }
         })
     }
-    const onFinishFailed = (errorInfo) => { AlertMessage.error() };
+    const onFinishFailed = () => { AlertMessage.error() };
     const handleOnChange = (e) => {
         setStateProduct({
             ...stateProduct,
@@ -213,14 +211,22 @@ const AdminProduct = () => {
     }, [form, stateProductDetail, isModalOpen]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true)
             fetchGetDetailProducts(rowSelected)
         }
-    }, [rowSelected])
+    }, [rowSelected, isOpenDrawer])
 
     const handleDeleteProduct = () => {
         mutationDelete.mutate({ id: rowSelected, token: user?.access_token }, {
+            onSettled: () => {
+                queryProduct.refetch()
+            }
+        })
+    }
+    const handleDeleteManyProduct = (ids) => {
+        // console.log("id", _id)
+        mutationDeleteMany.mutate({ ids: ids, token: user?.access_token }, {
             onSettled: () => {
                 queryProduct.refetch()
             }
@@ -231,7 +237,7 @@ const AdminProduct = () => {
         const res = await ProductService.GetAllProduct()
         return res
     }
-    const queryProduct = useQuery({ queryKey: 'products', queryFn: fetchGetAllProducts })
+    const queryProduct = useQuery({ queryKey: ['products'], queryFn: fetchGetAllProducts })
     const { isLoading, data: productData } = queryProduct
     const renderAction = () => {
         return (
@@ -574,7 +580,7 @@ const AdminProduct = () => {
                 </ModalComponent>
                 {/*  */}
                 {/* MODAL DEL PROD */}
-                <ModalComponent title="DELETE PRODUCT" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct} >
+                <ModalComponent forceRender title="DELETE PRODUCT" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct} >
                     <Loading isLoading={isPendingDelete} >
                         <div style={{ color: 'red' }}>
                             Confirm delete product!
@@ -584,21 +590,18 @@ const AdminProduct = () => {
                 {/*  */}
                 <hr />
                 {/* Table */}
-
-                <Loading isLoading={isPendingUpdate}>
-                    <TableComponent
-                        ColumnData={columns}
-                        TableData={dataTable}
-                        isLoading={isLoading}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onClick: (event) => { setRowSelected(record._id) }, // click row
-                            };
-                        }}
-                    />
-                </Loading>
-
-                {/*  */}
+                <TableComponent
+                    ColumnData={columns}
+                    TableData={dataTable}
+                    isLoading={isLoading || isPendingDeleteMany || isPendingDelete || isPendingUpdate}
+                    handleDeleteMany={handleDeleteManyProduct}
+                    onRow={(record, rowIndex) => {
+                        return {
+                            onClick: (event) => { setRowSelected(record._id) }, // click row
+                        };
+                    }}
+                />
+                {/* Update */}
                 <DrawerComponent title='Product Detail' isOpen={isOpenDrawer} size={'large'} onClose={() => { setIsOpenDrawer(false) }} >
                     <Loading isLoading={isLoadingUpdate || isPendingUpdate} >
                         <Form
@@ -703,8 +706,11 @@ const AdminProduct = () => {
                                     },
                                 ]}
                             >
-                                <WrapperUploadFile onChange={handleImageChangeDetailProduct} maxCount={1} >
-                                    <Button icon={<UploadOutlined />}>Select File</Button>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+
+                                    <WrapperUploadFile onChange={handleImageChangeDetailProduct} maxCount={1} >
+                                        <Button icon={<UploadOutlined />}>Select File</Button>
+                                    </WrapperUploadFile>
                                     {stateProductDetail?.image && (
                                         <img src={stateProductDetail?.image} alt='avatar' style={{
                                             height: '100px',
@@ -713,7 +719,7 @@ const AdminProduct = () => {
                                             objectFit: 'cover'
                                         }} />
                                     )}
-                                </WrapperUploadFile>
+                                </div>
                             </Form.Item>
                             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                 <Button type="primary" htmlType="submit">

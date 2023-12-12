@@ -32,21 +32,14 @@ const AdminUser = () => {
         phone: '',
         isAdmin: false,
         address: '',
+        avatar: ''
     })
 
     const [stateUser, setStateUser] = useState(inittial());
     const [stateUserDetail, setStateUserDetail] = useState(inittial());
 
-    const mutation = useMutationHook(
-        (data) => {
-            const { name, email, isAdmin, phone, address, avtar } = data
-            const res = UserService.signupUser({ name, email, isAdmin, phone, address, avtar })
-            return res
-        }
-    )
-    const { data, isSuccess } = mutation
 
-    const handleAddUser = () => { setIsModalOpen(true); }     // dummy function
+    const handleAddUser = () => { setIsModalOpen(true); }
     const handleCancel = () => {
         setIsModalOpen(false);
         setStateUser(inittial())
@@ -73,7 +66,7 @@ const AdminUser = () => {
             AlertMessage.success()
             handleCancelDrawer()
             mutationUpdate.reset()
-        } else if (data?.status === 'ERR') {
+        } else if (dataUpdate?.status === 'ERR') {
             AlertMessage.error()
             mutationUpdate.reset()
         }
@@ -83,9 +76,18 @@ const AdminUser = () => {
             AlertMessage.success()
             handleCancelDelete()
             mutationDelete.reset()
-        } else if (data?.status === 'ERR') {
+        } else if (dataDelete?.status === 'ERR') {
             AlertMessage.error()
             mutationDelete.reset()
+        }
+    })
+    useEffect(() => {
+        if (isSuccessDeleteMany && dataDeleteMany?.status === 'OK') {
+            AlertMessage.success()
+            mutationDeleteMany.reset()
+        } else if (dataDeleteMany?.status === 'ERR') {
+            AlertMessage.error()
+            mutationDeleteMany.reset()
         }
     })
     const mutationUpdate = useMutationHook(
@@ -102,23 +104,41 @@ const AdminUser = () => {
             return res
         }
     )
+    const mutation = useMutationHook(
+        (data) => {
+            const { name, email, isAdmin, phone, address, avtar } = data
+            const res = UserService.signupUser({ name, email, isAdmin, phone, address, avtar })
+            return res
+        }
+    )
+    const mutationDeleteMany = useMutationHook(
+        (data) => {
+            const { ids, token } = data
+            const res = UserService.deleteManyUser(ids, token)
+            return res
+        }
+    )
+    const { data, isSuccess } = mutation
     const { data: dataUpdate, isSuccess: isSuccessUpdate, isPending: isPendingUpdate } = mutationUpdate
     const { data: dataDelete, isSuccess: isSuccessDelete, isPending: isPendingDelete } = mutationDelete
-    const onFinishAddUser = (values) => {
+    const { data: dataDeleteMany, isSuccess: isSuccessDeleteMany, isPending: isPendingDeleteMany } = mutationDeleteMany
+
+
+    const onFinishAddUser = () => { //belong to add user not use
         mutation.mutate(stateUser, {
             onSettled: () => {
                 queryUser.refetch()
             }
         })
     };
-    const onFinishUpdateUser = (values) => {
+    const onFinishUpdateUser = () => {
         mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetail }, {
             onSettled: () => {
                 queryUser.refetch() //update table after update product
             }
         })
     }
-    const onFinishFailed = (errorInfo) => { AlertMessage.error() };
+    const onFinishFailed = () => { AlertMessage.error() };
 
     const handleOnChange = (e) => { //belong to add user not use
         setStateUser({
@@ -140,9 +160,9 @@ const AdminUser = () => {
             if (!file.url && !file.preview) {
                 file.preview = await getBase64(file.originFileObj);
             }
-            stateUserDetail({
+            setStateUserDetail({
                 ...stateUserDetail,
-                image: file.preview
+                avatar: file.preview
             })
         } catch (error) {
             AlertMessage.error('Something wrong')
@@ -159,6 +179,7 @@ const AdminUser = () => {
                     phone: res?.data.phone,
                     isAdmin: res?.data.isAdmin,
                     address: res?.data.address,
+                    avatar: res?.data.avatar
                 })
             }
             setIsLoadingUpdate(false)
@@ -173,14 +194,22 @@ const AdminUser = () => {
     }, [form, stateUserDetail, isModalOpen]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true)
             fetchGetDetailUsers(rowSelected)
         }
-    }, [rowSelected])
+    }, [rowSelected, isOpenDrawer])
 
     const handleDeleteUser = () => {
         mutationDelete.mutate({ id: rowSelected, token: user?.access_token }, {
+            onSettled: () => {
+                queryUser.refetch()
+            }
+        })
+    }
+    const handleDeleteManyUser = (ids) => {
+        // console.log("id", _id)
+        mutationDeleteMany.mutate({ ids: ids, token: user?.access_token }, {
             onSettled: () => {
                 queryUser.refetch()
             }
@@ -364,41 +393,16 @@ const AdminUser = () => {
         return { ...userTable, key: userTable._id, isAdmin: userTable.isAdmin ? 'TRUE' : 'FALSE' };
     })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     return (
         <div>
             <WrapperHeader>User Manager</WrapperHeader>
 
             <div style={{ padding: 20 }}>
-                <Button onClick={handleAddUser} disabled>
+                <Button onClick={handleAddUser} disabled> {/* Tam thoi tat add user  */}
                     Add User
                     <PlusCircleFilled />
                 </Button>
+                {/* Add user */}
                 {/* <ModalComponent forceRender title="Add user" open={isModalOpen} onCancel={handleCancel} footer={null}>
                     <Form
                         name="basic"
@@ -469,7 +473,7 @@ const AdminUser = () => {
                 </ModalComponent> */}
 
 
-
+                {/* delete user */}
                 <ModalComponent forceRender title="DELETE USER" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser} >
                     <Loading isLoading={isPendingDelete} >
                         <div style={{ color: 'red' }}>
@@ -479,19 +483,18 @@ const AdminUser = () => {
                 </ModalComponent>
                 <hr />
 
-                {/* Table */}
+                {/* users Table */}
+                <TableComponent ColumnData={columns} TableData={dataTable} isLoading={isLoadingUsers || isPendingDeleteMany || isPendingDelete || isPendingUpdate}
+                    handleDeleteMany={handleDeleteManyUser}
+                    onRow={(record, rowIndex) => {
+                        return {
+                            onClick: (event) => { setRowSelected(record._id) }, // click row
+                        };
+                    }}
+                />
 
-                <Loading isLoading={isPendingUpdate}>
-                    <TableComponent ColumnData={columns} TableData={dataTable} isLoading={isLoadingUsers}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onClick: (event) => { setRowSelected(record._id) }, // click row
-                            };
-                        }}
-                    />
-                </Loading>
-
-                <DrawerComponent title='User Detail' isOpen={isOpenDrawer} size={'large'} onClose={() => { setIsOpenDrawer(false) }} >
+                {/* edit user */}
+                <DrawerComponent forceRender title='User Detail' isOpen={isOpenDrawer} size={'large'} onClose={() => { setIsOpenDrawer(false) }} >
                     <Loading isLoading={isLoadingUpdate || isPendingUpdate} >
                         <Form
                             name="basic"
@@ -544,7 +547,7 @@ const AdminUser = () => {
                                     },
                                 ]}
                             >
-                                <InputComponent placeholder={'+84 xxx-xxx-xxx'} onChange={handleOnChangeDetailUser} value={stateUserDetail.phone} name='phone' />
+                                <InputComponent placeholder={'+84 xxx-xxx-xxx'} onChange={handleOnChangeDetailUser} value={stateUserDetail.phone} name='phone' type='number' />
                             </Form.Item>
 
                             <Form.Item label="Address" name="address"
@@ -566,19 +569,20 @@ const AdminUser = () => {
                                     },
                                 ]}
                             >
-                                <WrapperUploadFile onChange={handleAvatarUser} maxCount={1} >
-                                    <Button icon={<UploadOutlined />}>Select File</Button>
-                                    {stateUserDetail?.image && (
-                                        <img src={stateUserDetail?.image} alt='avatar' style={{
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <WrapperUploadFile onChange={handleAvatarUser} maxCount={1}>
+                                        <Button icon={<UploadOutlined />}>Select File</Button>
+                                    </WrapperUploadFile>
+                                    {stateUserDetail?.avatar && (
+                                        <img src={stateUserDetail?.avatar} alt='avatar' style={{
                                             height: '100px',
                                             width: '100px',
                                             borderRadius: '10px',
                                             objectFit: 'cover'
                                         }} />
                                     )}
-                                </WrapperUploadFile>
+                                </div>
                             </Form.Item>
-
                             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                 <Button type="primary" htmlType="submit">
                                     Apply

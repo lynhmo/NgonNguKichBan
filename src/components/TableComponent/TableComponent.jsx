@@ -1,24 +1,29 @@
-import React from 'react';
-import { Table } from 'antd';
+import React, { useState } from 'react';
+import { Table, Button } from 'antd';
 import Loading from '../../components/Loading/Loading'
 
 
 const TableComponent = (props) => {
-    const { selectionType = 'checkbox', TableData = [], ColumnData = [], isLoading = false } = props
-
+    const { selectionType = 'checkbox', TableData = [], ColumnData = [], isLoading = false, handleDeleteMany } = props
+    const [rowSelectKey, setRowSelectKey] = useState([])
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record.name,
-        }),
+            setRowSelectKey(selectedRowKeys)
+        }
     };
+    const handleDelete = () => {
+        handleDeleteMany(rowSelectKey)
+
+    }
     return (
         <Loading isLoading={isLoading}>
-
+            {rowSelectKey.length > 0 && (
+                // <div onClick={handleDelete} style={{}}>Delete Many!!!</div>
+                <Button type="primary" danger onClick={handleDelete}>
+                    Delete Many!!!
+                </Button>
+            )}
             <Table
                 rowSelection={{
                     type: selectionType,
