@@ -10,7 +10,7 @@ export const WarpperSmallImage = styled(Image)`
 export const WarpperName = styled.span`
    color: rgb(36,36,36);
    font-size: 30px;
-   font-weight: 400;
+   font-weight: 500;
    line-height: 32px;
    word-break: break-word;
 `

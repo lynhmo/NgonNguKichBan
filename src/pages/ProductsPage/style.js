@@ -3,8 +3,14 @@ import styled from "styled-components";
 
 export const WrapperProduct = styled(Col)`
     display:  flex;
-    justify-content: center;
+    flex-direction: column;
     gap: 15px;
-    // margin-top: 20px;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    align-content: center;
+`
+export const WarrperProductChild = styled(Col)`
+    display: flex;
+    justify-content: space-around;
 `

@@ -7,12 +7,13 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import * as UserService from "../../services/UserService"
 import { resetUser } from '../../redux/slides/userSlide';
+import { searchProduct } from '../../redux/slides/productSlide'
 import Loading from '../Loading/Loading';
 import BigLogo from '../../assets/images/Logo.png';
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdminPage = false }) => {
   const [loading, setLoading] = useState(false)
-
+  const [search, setSearch] = useState('')
   const navigate = useNavigate()
   const handleNavigateLogin = () => {
     navigate('/sign-in')
@@ -42,7 +43,6 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
       duration: 2,
     })
   }
-
   const content = (
     <div>
       <AccountPopupChild onClick={handleNavigateProfile}>Profile Page</AccountPopupChild>
@@ -63,6 +63,11 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
     setLoading(false)
   }, [user?.name, user?.avatar])
 
+  const onSearch = (e) => {
+    setSearch(e.target.value)
+    dispatch(searchProduct(e.target.value))
+  }
+
   return (
     <div>
       {/* this is for logout message */}
@@ -79,6 +84,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
               size='large'
               placeholder='Search'
               textButton='Search'
+              onChange={onSearch}
             />
           )}
         </Col>

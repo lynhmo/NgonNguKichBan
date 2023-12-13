@@ -129,6 +129,7 @@ const AdminProduct = () => {
     const { data: dataDeleteMany, isSuccess: isSuccessDeleteMany, isPending: isPendingDeleteMany } = mutationDeleteMany
 
     const onFinishAddProduct = () => {
+        console.log(stateProduct)
         mutation.mutate(stateProduct, {
             onSettled: () => {
                 queryProduct.refetch()
@@ -234,7 +235,7 @@ const AdminProduct = () => {
     }
     const handleEditProduct = () => { setIsOpenDrawer(true) }
     const fetchGetAllProducts = async () => {
-        const res = await ProductService.GetAllProduct()
+        const res = await ProductService.GetProductPage()
         return res
     }
     const queryProduct = useQuery({ queryKey: ['products'], queryFn: fetchGetAllProducts })
@@ -304,19 +305,6 @@ const AdminProduct = () => {
                         type="link"
                         size="small"
                         onClick={() => {
-                            confirm({
-                                closeDropdown: false,
-                            });
-                            setSearchText(selectedKeys[0]);
-                            setSearchedColumn(dataIndex);
-                        }}
-                    >
-                        Filter
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
                             close();
                         }}
                     >
@@ -338,21 +326,7 @@ const AdminProduct = () => {
             if (visible) {
                 setTimeout(() => searchInput.current?.select(), 100);
             }
-        },
-        // render: (text) =>
-        //     searchedColumn === dataIndex ? (
-        //         <Highlighter
-        //             highlightStyle={{
-        //                 backgroundColor: '#ffc069',
-        //                 padding: 0,
-        //             }}
-        //             searchWords={[searchText]}
-        //             autoEscape
-        //             textToHighlight={text ? text.toString() : ''}
-        //         />
-        //     ) : (
-        //         text
-        //     ),
+        }
     });
 
 

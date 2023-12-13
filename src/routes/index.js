@@ -48,7 +48,7 @@ export const routes = [
         isShowFooter: false,
     },
     {
-        path: '/product-detail',
+        path: '/product-detail/:id',
         page: ProductDetailPage,
         isShowHeader: true,
         isShowFooter: true,

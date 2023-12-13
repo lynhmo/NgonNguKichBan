@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
-import { Button, Space, Checkbox, Form } from 'antd'
+import { Button, Space, Form } from 'antd'
 import { PlusCircleFilled, DeleteTwoTone, EditTwoTone, SearchOutlined, UploadOutlined } from '@ant-design/icons'
 import * as AlertMessage from '../Message/Message'
 import TableComponent from '../TableComponent/TableComponent'
@@ -35,32 +35,32 @@ const AdminUser = () => {
         avatar: ''
     })
 
-    const [stateUser, setStateUser] = useState(inittial());
+    // const [stateUser, setStateUser] = useState(inittial());
     const [stateUserDetail, setStateUserDetail] = useState(inittial());
 
 
     const handleAddUser = () => { setIsModalOpen(true); }
-    const handleCancel = () => {
-        setIsModalOpen(false);
-        setStateUser(inittial())
-        form.resetFields();
-    };
+    // const handleCancel = () => {
+    //     setIsModalOpen(false);
+    //     // setStateUser(inittial())
+    //     form.resetFields();
+    // };
     const handleCancelDrawer = () => {
         setIsOpenDrawer(false);
         setStateUserDetail(inittial())
         form.resetFields();
     };
     const handleCancelDelete = () => { setIsModalOpenDelete(false) }
-    useEffect(() => {
-        if (isSuccess && data?.status === 'OK') {
-            AlertMessage.success()
-            handleCancel()
-            mutation.reset();
-        } else if (data?.status === 'ERR') {
-            AlertMessage.error()
-            mutation.reset();
-        }
-    })
+    // useEffect(() => {
+    //     if (isSuccess && data?.status === 'OK') {
+    //         AlertMessage.success()
+    //         handleCancel()
+    //         mutation.reset();
+    //     } else if (data?.status === 'ERR') {
+    //         AlertMessage.error()
+    //         mutation.reset();
+    //     }
+    // })
     useEffect(() => {
         if (isSuccessUpdate && dataUpdate?.status === 'OK') {
             AlertMessage.success()
@@ -124,13 +124,19 @@ const AdminUser = () => {
     const { data: dataDeleteMany, isSuccess: isSuccessDeleteMany, isPending: isPendingDeleteMany } = mutationDeleteMany
 
 
-    const onFinishAddUser = () => { //belong to add user not use
-        mutation.mutate(stateUser, {
-            onSettled: () => {
-                queryUser.refetch()
-            }
-        })
-    };
+    // const onFinishAddUser = () => { //belong to add user not use
+    //     mutation.mutate(stateUser, {
+    //         onSettled: () => {
+    //             queryUser.refetch()
+    //         }
+    //     })
+    // };
+    // const handleOnChange = (e) => { //belong to add user not use
+    //     setStateUser({
+    //         ...stateUser,
+    //         [e.target.name]: e.target.value
+    //     })
+    // }
     const onFinishUpdateUser = () => {
         mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetail }, {
             onSettled: () => {
@@ -140,12 +146,7 @@ const AdminUser = () => {
     }
     const onFinishFailed = () => { AlertMessage.error() };
 
-    const handleOnChange = (e) => { //belong to add user not use
-        setStateUser({
-            ...stateUser,
-            [e.target.name]: e.target.value
-        })
-    }
+
 
     const handleOnChangeDetailUser = (e) => {
         setStateUserDetail({
@@ -283,19 +284,7 @@ const AdminUser = () => {
                     >
                         Reset
                     </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({
-                                closeDropdown: false,
-                            });
-                            setSearchText(selectedKeys[0]);
-                            setSearchedColumn(dataIndex);
-                        }}
-                    >
-                        Filter
-                    </Button>
+
                     <Button
                         type="link"
                         size="small"

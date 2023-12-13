@@ -2,34 +2,62 @@ import { Card, Image } from 'antd';
 import React from 'react';
 import { StyleNameProduct, WrapperPriceText, WrapperReportText } from './style';
 import { StarFilled } from '@ant-design/icons';
-import zero2 from '../../assets/images/02.jpeg';
+import { useNavigate } from 'react-router-dom'
+
+
+
 
 export const CardComponent = (props) => {
-    const { name, image, type, price, countInStock, rating, description } = props;
+    const { name, image, type, price, countInStock, rating, description, id } = props;
 
-    const StarRating = (numberOfStars) => {
-        const stars = Array.from({ length: numberOfStars }, (_, index) => <StarFilled key={index} style={{ fontSize: '14px', color: '#ffc400' }} />);
-        return (
-            <div>
-                {stars}
-            </div>
-        );
+    const navigate = useNavigate()
+    const StarRating1 = (rating) => {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+
+        const stars = Array.from({ length: fullStars }, (_, index) => (
+            <StarFilled key={index} style={{ fontSize: '14px', color: '#ffc400' }} />
+        ));
+
+        if (hasHalfStar) {
+            stars.push(
+                <StarFilled
+                    key={fullStars}
+                    style={{ fontSize: '14px', color: '#ffc400', clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }}
+                />
+            );
+        }
+
+        return <div>{stars}</div>;
     };
+    const formattedAmount = price.toLocaleString('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+    });
+    const handleDetailProduct = (id) => {
+        console.log(id)
+        navigate(`/product-detail/${id}`)
+    }
+    // console.log(formattedAmount)
     return (
         <Card
             hoverable
             // headStyle={{width: '200px', height: '200px'}}
             style={{ width: 240 }}
             bodyStyle={{ padding: '10px' }}
-            cover={<Image src={zero2} preview={false}></Image>}
+            cover={
+                <div style={{ overflow: "hidden", height: "240px" }}>
+                    <Image src={image} preview={false} alt="img product" style={{ objectFit: 'cover' }} ></Image>
+                </div>
+            }
+            onClick={() => handleDetailProduct(id)}
         >
             <StyleNameProduct>{name}</StyleNameProduct>
             <WrapperReportText>
                 <span style={{ marginRight: '4px' }}>{rating}</span>
-                {/* <StarFilled style={{ fontSize: '14px', color: '#ffc400' }} /> */}
-                {StarRating(rating)}
+                {StarRating1(rating)}
             </WrapperReportText>
-            <WrapperPriceText>{price}đ</WrapperPriceText>
+            <WrapperPriceText>{formattedAmount}</WrapperPriceText>
         </Card>
     );
 };
