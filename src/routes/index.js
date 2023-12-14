@@ -8,6 +8,8 @@ import SignUpPage from "../pages/SignUp/SignUpPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import AdminPage from "../pages/AdminPage/AdminPage";
+import PaymentPage from "../pages/PaymentPage/PaymentPage";
+import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 
 export const routes = [
     {
@@ -19,6 +21,13 @@ export const routes = [
     {
         path: '/order',
         page: OrderPage,
+        isShowHeader: true,
+        isShowFooter: true,
+
+    },
+    {
+        path: '/order-success',
+        page: OrderSuccess,
         isShowHeader: true,
         isShowFooter: true,
 
@@ -56,6 +65,12 @@ export const routes = [
     {
         path: '/profile',
         page: ProfilePage,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/payment',
+        page: PaymentPage,
         isShowHeader: true,
         isShowFooter: true,
     },

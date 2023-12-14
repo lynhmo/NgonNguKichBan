@@ -42,3 +42,16 @@ export const AccountPopupChild = styled.div`
         background-color: #EFEFEF;
     }
 `
+export const CartText = styled.div`
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    &:hover{
+        text-decoration: underline;
+    }
+`
+
+

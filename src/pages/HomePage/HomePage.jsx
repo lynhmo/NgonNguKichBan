@@ -44,7 +44,7 @@ const HomePage = () => {
       </div>
 
       <div id="container" style={{ background: '#dbe4d8', padding: '20px 120px' }}>
-        <SliderComponent arrImages={[slider6, slider2, slider3]} />
+        <SliderComponent arrImages={[slider6, slider2, slider3]}/>
         <div style={{ display: 'flex', flexDirection: 'row', marginTop: '50px' }}>
           {/* Product */}
           <div style={{ width: '100%' }}>

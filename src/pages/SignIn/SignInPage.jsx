@@ -9,7 +9,7 @@ import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
 import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook';
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import * as AlertMessage from '../../components/Message/Message'
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux'
@@ -22,12 +22,11 @@ const SignIn = () => {
   const [password, setPassword] = useState('')
   const [isShowPassword, setIsShowPassword] = useState(false)
   const dispatch = useDispatch()
-
+  const location = useLocation()
   const mutation = useMutationHook(
     data => UserService.loginUser(data)
   )
   const { data, isPending } = mutation
-
   const hanldeSignIn = () => {
     mutation.mutate({
       email,
@@ -36,8 +35,12 @@ const SignIn = () => {
   }
   useEffect(() => {
     if (mutation.data?.status === 'OK') {
-      navigate('/')
-      AlertMessage.success()
+      if (location?.state) {
+        navigate(location?.state)
+      } else {
+        navigate('/')
+      }
+      AlertMessage.success("Đăng nhập thành công!")
       mutation.data.status = undefined
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
 

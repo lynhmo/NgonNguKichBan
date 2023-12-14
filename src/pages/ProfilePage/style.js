@@ -3,7 +3,8 @@ import { Upload } from 'antd';
 
 export const WarpperProfilePage = styled.div`
     padding: 0 120px 50px 120px;
-    background-color: #efefef;
+    background-color: #dbe4d8;
+    min-height: 100vh;
 `
 
 export const GoHome = styled.div`

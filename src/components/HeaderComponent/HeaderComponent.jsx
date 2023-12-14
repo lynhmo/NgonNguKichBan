@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Col, Popover, message } from "antd";
-import { WrapperAccount, WrapperHeader, WrapperTextHeader, AccountText, AccountPopup, AccountPopupChild } from "./style";
+import { WrapperAccount, WrapperHeader, WrapperTextHeader, AccountText, AccountPopup, AccountPopupChild, CartText } from "./style";
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import * as UserService from "../../services/UserService"
 import { resetUser } from '../../redux/slides/userSlide';
@@ -14,6 +14,8 @@ import BigLogo from '../../assets/images/Logo.png';
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdminPage = false }) => {
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
+  const location = useLocation()
+  const order = useSelector((state) => state.order)
   const navigate = useNavigate()
   const handleNavigateLogin = () => {
     navigate('/sign-in')
@@ -32,7 +34,11 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
     // Xoa accesstoken khi logout khoi localStogare
     localStorage.removeItem('access_token')
     LogoutMessage()
-    navigate('/')
+    if (location?.pathname) {
+      navigate(location?.pathname)
+    } else {
+      navigate('/')
+    }
   }
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -123,12 +129,16 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false, isAdmin
               </AccountText>
 
             </Loading>
-            {!isHiddenCart && (
-              <AccountText className="Cart">
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+
+
+            {!isHiddenCart && user?.access_token && (
+              <AccountText className="Cart" onClick={() => { navigate('/order') }}>
+                <CartText>
                   <ShoppingCartOutlined style={{ fontSize: '30px' }} />
                   <span style={{ marginLeft: '10px' }}>Cart</span>
-                </div>
+                  /
+                  <span>{order?.orderItems?.length}</span>
+                </CartText>
               </AccountText>
             )}
 
