@@ -15,6 +15,8 @@ import Loading from '../../components/Loading/Loading';
 import * as message from '../../components/Message/Message'
 import { updateUser } from '../../redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
+import moment from "moment"
+
 
 const PaymentPage = () => {
     const order = useSelector((state) => state.order)
@@ -80,6 +82,8 @@ const PaymentPage = () => {
         return Number(priceMemo) + Number(diliveryPriceMemo)
     }, [priceMemo, diliveryPriceMemo])
 
+    const handleVNPAY = () => {
+    }
 
     const handleAddOrder = () => {
         if (user?.access_token && order?.orderItemsSlected && user?.name && user?.address && user?.phone && user?.address && priceMemo && user?.id) {
@@ -98,7 +102,6 @@ const PaymentPage = () => {
             })
         }
     }
-    console.log(order)
     const mutationUpdate = useMutationHook(
         (data) => {
             const { id, token, ...rests } = data
@@ -123,7 +126,7 @@ const PaymentPage = () => {
             order?.orderItemsSlected.forEach(element => {
                 arrayOrderSelected.push(element.product)
             });
-            dispatch(removeAllOrderProduct({listChecked: arrayOrderSelected}))
+            dispatch(removeAllOrderProduct({ listChecked: arrayOrderSelected }))
             message.success('Thanh toán thành công')
             navigate('/order-success', {
                 state: {
@@ -199,12 +202,28 @@ const PaymentPage = () => {
                                     <WrapperRadio onChange={handlePayment} value={payment} >
                                         <Radio value="later_money" checked> Thanh toán tiền mặt khi nhận hàng</Radio>
                                         <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio>
-                                        <Radio value="zalo"> Thanh toán tiền bằng zalo</Radio>
+                                        <Radio value="zalo"> Thanh toán tiền bằng zalo pay</Radio>
                                         <Radio value="momo"> Thanh toán tiền bằng momo</Radio>
                                         <Radio value="vnpay"> Thanh toán tiền bằng vnpay</Radio>
                                     </WrapperRadio>
                                 </div>
                             </WrapperInfo>
+
+                            {/* Hien thi khi vnpay duoc tich vao */}
+                            {payment === 'vnpay' && (
+                                <WrapperInfo>
+                                    <div>
+                                        <Lable>Chuyển hướng sang VNPAY</Lable>
+                                    </div>
+                                    <ButtonComponent
+                                        size={20}
+                                        styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '100%', height: '50px', fontSize: '18px', fontWeight: '500' }}
+                                        textButton={'Thanh toán bang VNPAY'}
+                                        onClick={() => handleVNPAY()}
+                                    />
+                                </WrapperInfo>
+                            )}
+
                         </WrapperLeft>
                         <WrapperRight>
                             <h4>Billing</h4>

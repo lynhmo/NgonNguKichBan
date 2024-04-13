@@ -7,7 +7,8 @@ import { jwtDecode } from "jwt-decode";
 import * as UserService from './services/UserService'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from './redux/slides/userSlide';
-
+import ChatWidget from './components/ChatModel/ChatWidget';
+// import { FloatButton } from 'antd';
 function App() {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
@@ -64,6 +65,8 @@ function App() {
               <Route key={route.path} path={ischeckAuth ? route.path : undefined} element={
                 <Layout>
                   <Page />
+                  <ChatWidget></ChatWidget>
+                  {/*<FloatButton.BackTop />*/}
                 </Layout>
               } />
             )
