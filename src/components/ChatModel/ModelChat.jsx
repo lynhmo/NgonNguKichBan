@@ -3,8 +3,11 @@ import CodeResponse from "./CodeResponse";
 import ReactMarkdown from "react-markdown";
 import {  Drawer } from 'antd';
 import { Button,Input } from 'antd';
-const { TextArea } = Input;
+import * as ChatAI from '../../services/ChatAI'
 
+
+
+const { TextArea } = Input;
 const ModalWindow = (props) => {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
@@ -19,21 +22,6 @@ const ModalWindow = (props) => {
     const onClose = () => {
         setOpen(false);
     };
-    const surpriseOptions = [
-        "Mô hình gì đẹp nhất?",
-        "Giá cả của lego?",
-        "Xin chào!",
-    ];
-
-    const surprise = () => {
-        const randomValue = Math.floor(Math.random() * surpriseOptions.length);
-        setValue(surpriseOptions[randomValue]);
-    };
-
-    function autoResizeInput() {
-        textareaRef.current.style.height = "auto";
-        textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-    }
     const clear = () => {
         setChatHistory([]);
         setValue("");
@@ -60,8 +48,8 @@ const ModalWindow = (props) => {
                     "Content-Type": "application/json",
                 },
             };
-            const response = await fetch("http://localhost:3001/gemini", options);
-            const data = await response.text();
+            const response = await ChatAI.ChatPromt(options.body, options.headers);
+            const data = await response;
 
             let formattedResponse = "";
 
@@ -87,7 +75,6 @@ const ModalWindow = (props) => {
 
             setValue("");
             setError("");
-            textareaRef.current.style.height = "auto";
         } catch (error) {
             console.error(error);
             setError("Something went wrong. Please try again later.");
@@ -124,7 +111,7 @@ const ModalWindow = (props) => {
                         </Button>}
 
                     {error && !isLoading &&
-                        <Button style={{background: '#72af5c',color: 'white'}} onClick={getResponse}>
+                        <Button style={{background: '#72af5c',color: 'white'}} onClick={clear}>
                             Clear
                         </Button>}
 
