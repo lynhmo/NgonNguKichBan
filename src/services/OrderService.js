@@ -12,6 +12,11 @@ export const createOrder = async (access_token, data) => {
     return res.data
 }
 
+export const momoPay = async (data) => {
+    const res = await axios.post(`${process.env.REACT_APP_URL}/order/momo`, data)
+    return res.data
+}
+
 
 export const GetOrderFilter = async (search, page = 0, limit = 8) => {
     let res = {}

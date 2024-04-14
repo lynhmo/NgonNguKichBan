@@ -15,7 +15,6 @@ import Loading from '../../components/Loading/Loading';
 import * as message from '../../components/Message/Message'
 import { updateUser } from '../../redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
-import moment from "moment"
 
 
 const PaymentPage = () => {
@@ -29,13 +28,22 @@ const PaymentPage = () => {
         phone: '',
         address: '',
     })
-
+    const [resultCode, setResultCode] = useState()
+    const [resultMessage, setResultMessage] = useState()
 
     const navigate = useNavigate()
     const [form] = Form.useForm();
 
     const dispatch = useDispatch()
 
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        setResultCode(searchParams.get('resultCode'))
+        setResultMessage(searchParams.get('message'))
+        if (resultCode === "0") {
+            setPayment('momo')
+        }
+    }, [resultCode])
 
     useEffect(() => {
         form.setFieldsValue(stateUserDetails)
@@ -52,8 +60,6 @@ const PaymentPage = () => {
             })
         }
     }, [isOpenModalUpdateInfo])
-
-
 
 
     const handleChangeAddress = () => {
@@ -83,6 +89,18 @@ const PaymentPage = () => {
     }, [priceMemo, diliveryPriceMemo])
 
     const handleVNPAY = () => {
+    }
+
+    const handleMomo = () => {
+        setPayment('momo')
+        const res = OrderService.momoPay({ money: totalPriceMemo })
+        res.then((data) => window.location.href = data)
+    }
+
+
+    const handlePay = () => {
+
+        message.error('Hãy thanh toán trên ví điện tử trước')
     }
 
     const handleAddOrder = () => {
@@ -197,7 +215,7 @@ const PaymentPage = () => {
                                 </div>
                             </WrapperInfo>
                             <WrapperInfo>
-                                <div>
+                                {resultCode !== "0" ? (<div>
                                     <Lable>Chọn phương thức thanh toán</Lable>
                                     <WrapperRadio onChange={handlePayment} value={payment} >
                                         <Radio value="later_money" checked> Thanh toán tiền mặt khi nhận hàng</Radio>
@@ -206,7 +224,14 @@ const PaymentPage = () => {
                                         <Radio value="momo"> Thanh toán tiền bằng momo</Radio>
                                         <Radio value="vnpay"> Thanh toán tiền bằng vnpay</Radio>
                                     </WrapperRadio>
-                                </div>
+                                </div>) : (
+                                    <div>
+                                        <Lable>Đã thanh toán thành công bằng momo</Lable>
+                                    </div>
+
+                                )}
+
+
                             </WrapperInfo>
 
                             {/* Hien thi khi vnpay duoc tich vao */}
@@ -220,6 +245,19 @@ const PaymentPage = () => {
                                         styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '100%', height: '50px', fontSize: '18px', fontWeight: '500' }}
                                         textButton={'Thanh toán bang VNPAY'}
                                         onClick={() => handleVNPAY()}
+                                    />
+                                </WrapperInfo>
+                            )}
+                            {payment === 'momo' && (resultCode !== "0") && (
+                                <WrapperInfo>
+                                    <div>
+                                        <Lable>Chuyển hướng sang MOMO</Lable>
+                                    </div>
+                                    <ButtonComponent
+                                        size={20}
+                                        styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '100%', height: '50px', fontSize: '18px', fontWeight: '500' }}
+                                        textButton={'Thanh toán bằng Momo'}
+                                        onClick={() => handleMomo()}
                                     />
                                 </WrapperInfo>
                             )}
@@ -253,12 +291,29 @@ const PaymentPage = () => {
                                     </span>
                                 </WrapperInfo>
                             </div>
-                            <ButtonComponent
+                            {payment === 'vnpay' || (payment === 'momo' && resultCode !== "0")
+                                ?
+                                <ButtonComponent
+                                    disabled={true}
+                                    size={20}
+                                    styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '100%', height: '50px', fontSize: '18px', fontWeight: '500' }}
+                                    textButton={'Xác nhận thanh toán'}
+                                    onClick={() => handlePay()}
+                                />
+                                :
+                                <ButtonComponent
+                                    size={20}
+                                    styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '100%', height: '50px', fontSize: '18px', fontWeight: '500' }}
+                                    textButton={'Xác nhận thanh toán'}
+                                    onClick={() => handleAddOrder()}
+                                />
+                            }
+                            {/* <ButtonComponent
                                 size={20}
                                 styleButton={{ backgroundColor: '#72af5c', color: 'white', borderRadius: '6px', width: '100%', height: '50px', fontSize: '18px', fontWeight: '500' }}
                                 textButton={'Xác nhận thanh toán'}
                                 onClick={() => handleAddOrder()}
-                            />
+                            /> */}
                         </WrapperRight>
                     </div>
                 </div>
