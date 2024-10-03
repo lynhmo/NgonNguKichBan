@@ -47,7 +47,6 @@ const ProductsPage = () => {
     }
   }, [products])
 
-  // console.log(productSearch)
 
   useEffect(() => {
     if (refSearch.current) {

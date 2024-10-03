@@ -12,7 +12,6 @@ export const GetProductPage = async (page, limit) => {
 }
 export const GetProductFilter = async (search, page = 0, limit = 8) => {
     let res = {}
-    // console.log('search', search)
     if (search) {
         res = await axios.get(`${process.env.REACT_APP_URL}/product/getall?page=${page}&limit=${limit}&filter=name&filter=${search}`)
     } else {

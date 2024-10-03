@@ -66,6 +66,10 @@ const AdminProduct = () => {
         }
     })
     useEffect(() => {
+        console.log("dataUpdate: ");
+        console.log(dataUpdate);
+        console.log(isSuccessUpdate);
+        
         if (isSuccessUpdate && dataUpdate?.status === 'OK') {
             AlertMessage.success()
             handleCancelDrawer()
@@ -129,7 +133,6 @@ const AdminProduct = () => {
     const { data: dataDeleteMany, isSuccess: isSuccessDeleteMany, isPending: isPendingDeleteMany } = mutationDeleteMany
 
     const onFinishAddProduct = () => {
-        console.log(stateProduct)
         mutation.mutate(stateProduct, {
             onSettled: () => {
                 queryProduct.refetch()
@@ -226,7 +229,6 @@ const AdminProduct = () => {
         })
     }
     const handleDeleteManyProduct = (ids) => {
-        // console.log("id", _id)
         mutationDeleteMany.mutate({ ids: ids, token: user?.access_token }, {
             onSettled: () => {
                 queryProduct.refetch()

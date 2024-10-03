@@ -35,10 +35,8 @@ export const CardComponent = (props) => {
         currency: 'VND',
     });
     const handleDetailProduct = (id) => {
-        // console.log(id)
         navigate(`/product-detail/${id}`)
     }
-    // console.log(formattedAmount)
     return (
         <Card
             hoverable

@@ -46,7 +46,6 @@ const SignIn = () => {
 
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);
-        // console.log("data?.access_token: ", data?.access_token);
         if (decoded?.id) {
           handleGetDetailUser(decoded?.id, data?.access_token)
         }

@@ -209,7 +209,6 @@ const AdminUser = () => {
         })
     }
     const handleDeleteManyUser = (ids) => {
-        // console.log("id", _id)
         mutationDeleteMany.mutate({ ids: ids, token: user?.access_token }, {
             onSettled: () => {
                 queryUser.refetch()

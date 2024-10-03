@@ -15,7 +15,7 @@ export const signupUser = async (data) => {
 export const getDetailUser = async (id, access_token) => {
     const res = await axiosJWT.get(`${process.env.REACT_APP_URL}/user/get-detail/${id}`, {
         headers: {
-            token: `BbbbGet ${access_token}`
+            token: `Bearer ${access_token}`
         }
     })
     return res.data
@@ -37,7 +37,7 @@ export const logoutUser = async () => {
 export const updateUser = async (id, access_token, data) => {
     const res = await axiosJWT.put(`${process.env.REACT_APP_URL}/user/update-user/${id}`, data, {
         headers: {
-            token: `BbbbGet ${access_token}`
+            token: `Bearer ${access_token}`
         }
     })
     return res.data
@@ -47,7 +47,7 @@ export const updateUser = async (id, access_token, data) => {
 export const getallUser = async (access_token) => {
     const res = await axiosJWT.get(`${process.env.REACT_APP_URL}/user/getall`, {
         headers: {
-            token: `BbbbGet ${access_token}`
+            token: `Bearer ${access_token}`
         }
     })
     return res.data
@@ -56,7 +56,7 @@ export const getallUser = async (access_token) => {
 export const deleteUser = async (id, access_token) => {
     const res = await axiosJWT.delete(`${process.env.REACT_APP_URL}/user/delete-user/${id}`, {
         headers: {
-            token: `BbbbGet ${access_token}`
+            token: `Bearer ${access_token}`
         }
     })
     return res.data
@@ -64,7 +64,7 @@ export const deleteUser = async (id, access_token) => {
 export const deleteManyUser = async (data, access_token) => {
     const res = await axiosJWT.post(`${process.env.REACT_APP_URL}/user/delete-many`, data, {
         headers: {
-            token: `BbbbGet ${access_token}`
+            token: `Bearer ${access_token}`
         }
     })
     return res.data

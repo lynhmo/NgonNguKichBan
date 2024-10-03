@@ -14,7 +14,6 @@ const OrderSuccess = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const { state } = location
-    console.log('done', state)
     const mutationAddOrder = useMutationHook(
         (data) => {
             const { token, ...rests } = data
