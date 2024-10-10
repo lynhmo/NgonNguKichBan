@@ -1,15 +1,18 @@
-FROM node:20.10.0-slim
+# frontend/Dockerfile
+
+# Step 1: Build the React app
+FROM node:18 as build
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 RUN npm install
 
+RUN npm install -g serve
+
 COPY . .
 
-ENV PORT=3000
+RUN npm run build
 
-EXPOSE 3000
-
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build"]
