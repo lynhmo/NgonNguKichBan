@@ -66,10 +66,6 @@ const AdminProduct = () => {
         }
     })
     useEffect(() => {
-        console.log("dataUpdate: ");
-        console.log(dataUpdate);
-        console.log(isSuccessUpdate);
-        
         if (isSuccessUpdate && dataUpdate?.status === 'OK') {
             AlertMessage.success()
             handleCancelDrawer()

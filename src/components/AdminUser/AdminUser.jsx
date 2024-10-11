@@ -40,11 +40,7 @@ const AdminUser = () => {
 
 
     const handleAddUser = () => { setIsModalOpen(true); }
-    // const handleCancel = () => {
-    //     setIsModalOpen(false);
-    //     // setStateUser(inittial())
-    //     form.resetFields();
-    // };
+
     const handleCancelDrawer = () => {
         setIsOpenDrawer(false);
         setStateUserDetail(inittial())
@@ -217,7 +213,7 @@ const AdminUser = () => {
     }
     const handleEditUser = () => { setIsOpenDrawer(true) }
     const fetchGetAllUser = async () => {
-        const res = await UserService.getallUser()
+        const res = await UserService.getallUser(user?.access_token)
         return res
     }
     const queryUser = useQuery({ queryKey: ['user'], queryFn: fetchGetAllUser })
