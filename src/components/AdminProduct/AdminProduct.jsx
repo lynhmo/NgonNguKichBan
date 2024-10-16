@@ -70,7 +70,7 @@ const AdminProduct = () => {
             AlertMessage.success()
             handleCancelDrawer()
             mutationUpdate.reset()
-        } else if (data?.status === 'ERR') {
+        } else if (dataUpdate?.status === 'ERR') {
             AlertMessage.error()
             mutationUpdate.reset()
         }
@@ -97,7 +97,7 @@ const AdminProduct = () => {
     const mutationUpdate = useMutationHook(
         (data) => {
             const { id, token, ...rests } = data
-            const res = ProductService.updateProduct(id, token, { ...rests })
+            const res = ProductService.updateProduct(id, token, { ...rests })    
             return res
         }
     )

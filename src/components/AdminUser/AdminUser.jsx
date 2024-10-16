@@ -166,9 +166,9 @@ const AdminUser = () => {
         }
     }
 
-    const fetchGetDetailUsers = async (rowSelected) => {
+    const fetchGetDetailUsers = async (rowSelected,token) => {
         try {
-            const res = await UserService.getDetailUser(rowSelected)
+            const res = await UserService.getDetailUser(rowSelected,token)
             if (res?.data) {
                 setStateUserDetail({
                     name: res?.data.name,
@@ -193,7 +193,7 @@ const AdminUser = () => {
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true)
-            fetchGetDetailUsers(rowSelected)
+            fetchGetDetailUsers(rowSelected,user?.access_token)
         }
     }, [rowSelected, isOpenDrawer])
 
